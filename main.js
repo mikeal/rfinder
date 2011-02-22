@@ -26,7 +26,7 @@ var folders = ['/Users/mikeal/Movies']
 
 exports.createServer = function (folders, cb) {
   folders.forEach(function (root) {
-    watch.createMonitor(root, function (monitor) {
+    watch.createMonitor(root, {interval:1000 * 60}, function (monitor) {
       monitors.push(monitor);
       if (monitors.length === folders.length) {
         var s = http.createServer(function (req, res) {
