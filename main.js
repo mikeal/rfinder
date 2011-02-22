@@ -9,8 +9,8 @@ var fs = require('fs')
 function spawn () {
   var args = Array.prototype.slice.call(arguments);
   var x = child_process.spawn.apply(child_process, args);
-  x.stdout.on('data', function (chunk) {console.log(chunk)})
-  x.stderr.on('data', function (chunk) {console.error(chunk)})
+  x.stdout.on('data', function (chunk) {console.print(chunk.toString())})
+  x.stderr.on('data', function (chunk) {console.error(chunk.toString())})
   x.on('exit', function (code) {
     console.log("spawn "+JSON.stringify(args)+" results in "+code)
   })
