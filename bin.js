@@ -14,5 +14,8 @@ argv.forEach(function (a) {
 })
 
 rfinder.createServer(folders, function (server) {
+  if (process.env.USER === 'root') {
+    server.username = 'mikeal';
+  }
   server.listen(port, function () {console.log("Serving on "+port+"...")});
 })

@@ -36,7 +36,11 @@ exports.createServer = function (folders, cb) {
               var body = JSON.parse(buf);
               
               if (req.url === '/open') {
-                spawn("/usr/bin/open", [body.filename]);
+                if (s.username) {
+                  spawn('sudo', ["-u", "mikeal", "/usr/bin/open", body.filename]);
+                } else {
+                  spawn("/usr/bin/open", [body.filename]);
+                }
               } else {
                 var foundfiles = [];
                 monitors.forEach(function (monitor) {
