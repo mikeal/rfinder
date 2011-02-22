@@ -18,13 +18,18 @@
     var current = '';
     var prev;
     $("input#search").keyup(function () {
-      if (prev) prev.abort();
       var search = $(this).val();
       if (search === current) return;
       if (search === '') return;
+      if (prev) {
+        prev.abort();
+        prev.aborted = true;
+      }
       current = search;
       prev = request({url:'/', type:'POST', data:{search:search}}, function (e, results) {
+        if (e && prev.aborted) return;
         if (current !== search) return;
+        if (e) {console.log(e)}
         $('div#results').html('');
         results.forEach(function (r) {
           $('div#results').append('<div>'+r+'<span class="openfile">open</span></div>');
