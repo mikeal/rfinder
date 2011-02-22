@@ -8,10 +8,13 @@ var fs = require('fs')
   
 function spawn () {
   var args = Array.prototype.slice.call(arguments);
+  var cb = args.pop();
   var x = child_process.spawn.apply(child_process, args);
-  x.stdout.on('data', function (chunk) {console.print(chunk.toString())})
-  x.stderr.on('data', function (chunk) {console.error(chunk.toString())})
+  var body = ''
+  x.stdout.on('data', function (chunk) {body += chunk; console.print(chunk.toString())})
+  x.stderr.on('data', function (chunk) {body += chunk; console.error(chunk.toString())})
   x.on('exit', function (code) {
+    cb(code, body)
     console.log("spawn "+JSON.stringify(args)+" results in "+code)
   })
 }  
@@ -34,18 +37,27 @@ exports.createServer = function (folders, cb) {
             })
             req.on('end', function () {
               var body = JSON.parse(buf);
-              
+              var finish = function (code, body) {
+                if (code > 0) {
+                  res.writeHead(500, {'content-type':'application/json'});
+                } else {
+                  res.writeHead(200, {'content-type':'application/json'});
+                }
+                res.write(JSON.stringify({output:body, code:code}));
+                res.end();
+              }
               if (req.url === '/open') {
                 if (s.username) {
-                  spawn('sudo', ["-u", "mikeal", "/usr/bin/open", body.filename]);
+                  spawn('sudo', ["-u", "mikeal", "/usr/bin/open", body.filename], finish);
                 } else {
-                  spawn("/usr/bin/open", [body.filename]);
+                  spawn("/usr/bin/open", [body.filename], finish);
                 }
               } else {
                 var foundfiles = [];
+                body.search = body.search.toLowerCase();
                 monitors.forEach(function (monitor) {
                   for (f in monitor.files) {
-                    if (f.slice(f.lastIndexOf('/')).indexOf(body.search) !== -1) {
+                    if (f.toLowerCase().slice(f.lastIndexOf('/')).indexOf(body.search) !== -1) {
                       foundfiles.push(f);
                     }
                   }

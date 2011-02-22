@@ -32,7 +32,7 @@
           var filename = $(this).parent().text();
           filename = filename.slice(0, filename.length - 4);
           request({url:'/open', type:'POST', data:{filename:filename}}, function (e, resp) {
-            
+            if (e) console.log(e);
           })
         })
       })
