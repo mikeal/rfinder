@@ -55,6 +55,10 @@ exports.createServer = function (folders, cb) {
               } else {
                 var foundfiles = [];
                 body.search = body.search.toLowerCase();
+                if (req.connection.writable === false && req.connection.readable === false) {
+                  console.log('aborted')
+                  return;
+                }
                 monitors.forEach(function (monitor) {
                   for (f in monitor.files) {
                     if (f.toLowerCase().slice(f.lastIndexOf('/')).indexOf(body.search) !== -1) {

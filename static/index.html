@@ -16,12 +16,14 @@
   <input type="text" id="search"></input>
   <script>
     var current = '';
+    var prev;
     $("input#search").keyup(function () {
+      if (prev) prev.abort();
       var search = $(this).val();
       if (search === current) return;
       if (search === '') return;
       current = search;
-      request({url:'/', type:'POST', data:{search:search}}, function (e, results) {
+      prev = request({url:'/', type:'POST', data:{search:search}}, function (e, results) {
         if (current !== search) return;
         $('div#results').html('');
         results.forEach(function (r) {
@@ -32,7 +34,7 @@
           var filename = $(this).parent().text();
           filename = filename.slice(0, filename.length - 4);
           request({url:'/open', type:'POST', data:{filename:filename}}, function (e, resp) {
-            if (e) console.log(e);
+            if (e) console.log(e);  
           })
         })
       })

@@ -12,7 +12,7 @@ var request = function (options, callback) {
   if (!options.dataType) options.processData = false;
   if (!options.dataType) options.contentType = 'application/json';
   if (!options.dataType) options.dataType = 'json';
-  $.ajax(options)
+  return $.ajax(options)
 }
 
 $.expr[":"].exactly = function(obj, index, meta, stack){ 
