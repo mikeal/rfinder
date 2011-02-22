@@ -27,9 +27,9 @@
       }
       current = search;
       prev = request({url:'/', type:'POST', data:{search:search}}, function (e, results) {
-        if (e && prev.aborted) return;
+        if (e && e.aborted) return;
         if (current !== search) return;
-        if (e) {console.log(e)}
+        if (e) {console.log(e); return;}
         $('div#results').html('');
         results.forEach(function (r) {
           $('div#results').append('<div>'+r+'<span class="openfile">open</span></div>');
