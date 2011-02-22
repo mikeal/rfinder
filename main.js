@@ -3,8 +3,18 @@ var fs = require('fs')
   , http = require('http')
   , paperboy = require('paperboy')
   , path = require('path')
-  , spawn = require('child_process').spawn
+  , child_process = require('child_process')
   ;
+  
+function spawn () {
+  var args = Array.prototype.slice.call(arguments);
+  var x = child_process.spawn.apply(child_process, args);
+  x.stdout.on('data', function (chunk) {console.log(chunk)})
+  x.stderr.on('data', function (chunk) {console.error(chunk)})
+  x.on('exit', function (code) {
+    console.log("spawn "+JSON.stringify(args)+" results in "+code)
+  })
+}  
   
 var folders = ['/Users/mikeal/Movies']
   , WEBROOT = path.join(__dirname, 'static')
